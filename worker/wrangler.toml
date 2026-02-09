@@ -9,10 +9,11 @@ binding = "DB"
 database_name = "rfe-db"
 database_id = "fc74590f-c4f9-4600-b351-a5eac0dce628"
 
-# R2 Bucket for file storage (images, PDFs) - uncomment after creating bucket
-# [[r2_buckets]]
-# binding = "BUCKET"
-# bucket_name = "rfe-app-files"
+# R2 Bucket for file storage (images, PDFs)
+# Create bucket with: npx wrangler r2 bucket create rfe-app-files
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "rfe-app-files"
 
 # Default environment variables (development)
 [vars]
@@ -23,6 +24,10 @@ ALLOWED_ORIGIN = "http://localhost:3000"
 [env.production]
 name = "rfe-backend-prod"
 
+[[env.production.r2_buckets]]
+binding = "BUCKET"
+bucket_name = "rfe-app-files-prod"
+
 [env.production.vars]
 ALLOWED_ORIGIN = "https://your-production-domain.com"
 # JWT_SECRET should be set via `wrangler secret put JWT_SECRET --env production`
@@ -30,6 +35,10 @@ ALLOWED_ORIGIN = "https://your-production-domain.com"
 # Staging environment (optional)
 [env.staging]
 name = "rfe-backend-staging"
+
+[[env.staging.r2_buckets]]
+binding = "BUCKET"
+bucket_name = "rfe-app-files-staging"
 
 [env.staging.vars]
 ALLOWED_ORIGIN = "https://your-staging-domain.com"

@@ -86,4 +86,35 @@ auth.post('/signup', async (c) => {
     }
 });
 
+// Crew PIN Login
+auth.post('/crew-login', async (c) => {
+    const { username, pin } = await c.req.json();
+
+    const user = await c.env.DB.prepare('SELECT * FROM users WHERE username = ?').bind(username).first();
+
+    if (!user) {
+        return c.json({ status: 'error', message: 'User not found' }, 401);
+    }
+
+    // @ts-ignore
+    if (user.crew_pin !== pin) {
+        return c.json({ status: 'error', message: 'Invalid PIN' }, 401);
+    }
+
+    // @ts-ignore
+    const token = await generateToken(user.username, 'crew', c.env.JWT_SECRET);
+
+    return c.json({
+        status: 'success',
+        data: {
+            // @ts-ignore
+            username: user.username,
+            // @ts-ignore
+            companyName: user.company_name,
+            role: 'crew',
+            token
+        }
+    });
+});
+
 export const authRouter = auth;

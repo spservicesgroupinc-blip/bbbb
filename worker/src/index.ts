@@ -76,6 +76,9 @@ app.post('/', async (c) => {
             case 'SIGNUP':
                 internalPath = '/auth/signup';
                 break;
+            case 'CREW_LOGIN':
+                internalPath = '/auth/crew-login';
+                break;
             case 'SYNC_DOWN':
                 internalPath = '/sync/down';
                 break;
