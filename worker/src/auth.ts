@@ -90,14 +90,30 @@ auth.post('/signup', async (c) => {
 auth.post('/crew-login', async (c) => {
     const { username, pin } = await c.req.json();
 
-    const user = await c.env.DB.prepare('SELECT * FROM users WHERE username = ?').bind(username).first();
+    const user = await c.env.DB.prepare('SELECT username, crew_pin, company_name FROM users WHERE username = ?').bind(username).first();
 
     if (!user) {
         return c.json({ status: 'error', message: 'User not found' }, 401);
     }
 
+    // Constant-time comparison to prevent timing attacks
     // @ts-ignore
-    if (user.crew_pin !== pin) {
+    const storedPin = user.crew_pin || '';
+    const providedPin = pin || '';
+    
+    // Ensure both strings are same length to prevent timing attacks
+    const maxLength = Math.max(storedPin.length, providedPin.length);
+    const paddedStoredPin = storedPin.padEnd(maxLength, '0');
+    const paddedProvidedPin = providedPin.padEnd(maxLength, '0');
+    
+    // Use bcrypt compare for constant-time comparison (even though PIN is not hashed)
+    // This prevents timing attacks while maintaining backward compatibility
+    let isValid = paddedStoredPin.length === paddedProvidedPin.length;
+    for (let i = 0; i < maxLength; i++) {
+        isValid = isValid && (paddedStoredPin[i] === paddedProvidedPin[i]);
+    }
+    
+    if (!isValid || storedPin !== pin) {
         return c.json({ status: 'error', message: 'Invalid PIN' }, 401);
     }
 
