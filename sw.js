@@ -32,7 +32,7 @@ self.addEventListener('activate', (event) => {
         })
       );
     })
-    .then(() => self.clients.claim())
+      .then(() => self.clients.claim())
   );
 });
 
@@ -43,10 +43,10 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-            return caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, response.clone());
-                return response;
-            });
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, response.clone());
+            return response;
+          });
         })
         .catch(() => {
           return caches.match('./index.html');
@@ -55,9 +55,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. Handle API calls (Google Script) - Network Only (Don't cache dynamic data)
-  if (event.request.url.includes('script.google.com')) {
-      return; // Let browser handle normally
+  // 2. Handle API calls (Cloudflare Worker) - Network Only (Don't cache dynamic data)
+  if (event.request.url.includes('workers.dev') || event.request.url.includes('localhost:8787')) {
+    return; // Let browser handle normally
   }
 
   // 3. Handle Assets (JS, CSS, Images) - Stale-While-Revalidate
@@ -66,16 +66,16 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request)
       .then((cachedResponse) => {
         const fetchPromise = fetch(event.request).then((networkResponse) => {
-           // Check if valid response
-           if(networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-               const responseToCache = networkResponse.clone();
-               caches.open(CACHE_NAME).then((cache) => {
-                   cache.put(event.request, responseToCache);
-               });
-           }
-           return networkResponse;
+          // Check if valid response
+          if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return networkResponse;
         }).catch(() => {
-            // Network failed, nothing to do (we already returned cache if available)
+          // Network failed, nothing to do (we already returned cache if available)
         });
 
         // Return cached response immediately if available, otherwise wait for network
