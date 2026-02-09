@@ -17,6 +17,9 @@
     "worker:db:migrate:prod": "cd worker && npm run db:migrate:prod",
     "worker:secret:jwt": "cd worker && npm run secret:jwt",
     "worker:secret:jwt:prod": "cd worker && npm run secret:jwt:prod",
+    "worker:r2:create": "cd worker && npx wrangler r2 bucket create rfe-app-files",
+    "worker:r2:create:prod": "cd worker && npx wrangler r2 bucket create rfe-app-files-prod",
+    "worker:r2:create:staging": "cd worker && npx wrangler r2 bucket create rfe-app-files-staging",
     "deploy:frontend": "npm run build && npx wrangler pages deploy dist --project-name=rfe-foam-app",
     "setup": "npm install && cd worker && npm install"
   },
