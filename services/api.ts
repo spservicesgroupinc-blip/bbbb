@@ -166,11 +166,12 @@ export const loginUser = async (username: string, password: string): Promise<Use
 };
 
 /**
- * Authenticates crew member using PIN (placeholder)
+ * Authenticates crew member using PIN
  */
 export const loginCrew = async (username: string, pin: string): Promise<UserSession | null> => {
-  // TODO: Implement crew login in Cloudflare backend
-  throw new Error("Crew login not yet implemented");
+  const result = await apiRequest('/auth/crew-login', { username, pin }, 2, false);
+  if (result.status === 'success') return result.data;
+  throw new Error(result.message || "Crew login failed");
 };
 
 /**
