@@ -1,0 +1,35 @@
+name = "rfe-backend"
+main = "src/index.ts"
+compatibility_date = "2025-02-04"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database - Run 'npx wrangler d1 create rfe-db' to get the database_id
+[[d1_databases]]
+binding = "DB"
+database_name = "rfe-db"
+database_id = "fc74590f-c4f9-4600-b351-a5eac0dce628"
+
+# R2 Bucket for file storage (images, PDFs) - uncomment after creating bucket
+# [[r2_buckets]]
+# binding = "BUCKET"
+# bucket_name = "rfe-app-files"
+
+# Default environment variables (development)
+[vars]
+JWT_SECRET = "dev-secret-key-change-in-prod"
+ALLOWED_ORIGIN = "http://localhost:3000"
+
+# Production environment overrides
+[env.production]
+name = "rfe-backend-prod"
+
+[env.production.vars]
+ALLOWED_ORIGIN = "https://your-production-domain.com"
+# JWT_SECRET should be set via `wrangler secret put JWT_SECRET --env production`
+
+# Staging environment (optional)
+[env.staging]
+name = "rfe-backend-staging"
+
+[env.staging.vars]
+ALLOWED_ORIGIN = "https://your-staging-domain.com"

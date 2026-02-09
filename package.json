@@ -1,12 +1,24 @@
 {
-  "name": "copy-of-copy-of-rfe-foam-prov1",
+  "name": "rfe-foam-app",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:all": "concurrently \"npm run dev\" \"npm run worker:dev\"",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "worker:dev": "cd worker && npm run dev",
+    "worker:deploy": "cd worker && npm run deploy",
+    "worker:deploy:prod": "cd worker && npm run deploy:prod",
+    "worker:db:create": "cd worker && npm run db:create",
+    "worker:db:migrate": "cd worker && npm run db:migrate",
+    "worker:db:migrate:local": "cd worker && npm run db:migrate:local",
+    "worker:db:migrate:prod": "cd worker && npm run db:migrate:prod",
+    "worker:secret:jwt": "cd worker && npm run secret:jwt",
+    "worker:secret:jwt:prod": "cd worker && npm run secret:jwt:prod",
+    "deploy:frontend": "npm run build && npx wrangler pages deploy dist --project-name=rfe-foam-app",
+    "setup": "npm install && cd worker && npm install"
   },
   "dependencies": {
     "lucide-react": "^0.561.0",
@@ -19,6 +31,7 @@
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
     "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "concurrently": "^9.1.2"
   }
 }
